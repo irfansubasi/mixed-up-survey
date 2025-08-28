@@ -3,6 +3,7 @@
 
     const config = {
         landing: {
+            image: 'https://raw.githubusercontent.com/irfansubasi/mixed-up-survey/refs/heads/main/pic%20for%20url/choose.png',
             title: 'We want to know a little bit about you',
             description: 'Fill out a quick survey and let us recommend products just for you!',
             button: 'Start Survey',
@@ -11,6 +12,13 @@
             title: 'Personal Information',
             consent: 'I consent to the collection of my data',
             button: 'Continue',
+            countries: [
+                { value: '+90', label: 'Turkiye' },
+                { value: '+1', label: 'United States' },
+                { value: '+49', label: 'Germany' },
+                { value: '+44', label: 'United Kingdom'},
+                { value: '+33', label: 'France'},
+            ],
         },
         skinType: {
             title: 'What\'s your skin type?',
@@ -61,15 +69,6 @@
 
     const eventConfig = {};
 
-    const stepOrder = [
-        'landing',
-        'userInfo',
-        'skinType',
-        'concern',
-        'routine',
-        'results',
-    ];
-
     const state = {
         currentStep: 'landing',
         consent: false,
@@ -95,6 +94,7 @@
         modalOverlay: 'ins-modal-overlay',
         modalContent: 'ins-modal-content',
         stepContainer: 'ins-step-container',
+        stepImage: 'ins-step-image',
         stepContent: 'ins-step-content',
         stepTitle: 'ins-step-title',
         stepDescription: 'ins-step-description',
@@ -141,7 +141,8 @@
 
     self.buildCSS = () => {
         const { style } = classes;
-        const { modalOverlay, modal, show, stepContent, modalContent, stepContainer, wrapper, stepTitle, stepDescription, button } = selectors;
+        const { modalOverlay, modal, show, stepContent, modalContent, stepContainer, wrapper, stepTitle, stepDescription,
+            button, stepImage, userForm, formGroup, phoneGroup } = selectors;
         const customStyle = `
             <style class="${style}">
 
@@ -149,7 +150,7 @@
                     box-sizing: border-box;
                     margin: 0;
                     padding: 0;
-                    font-family: 'Inter', sans-serif;
+                    font-family: 'Inter', 'Apple Color Emoji', sans-serif;
                 }
 
                 ${modalOverlay}{
@@ -190,9 +191,21 @@
 
                 ${stepContent}{
                     display: none;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 20px;
+                    width: 100%;
+                }
+
+                ${stepImage}{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
                 }
 
                 ${stepTitle}{
+                    color: #1F2937;
                     font-size: 25px;
                     font-weight: 700;
                     text-transform: uppercase;
@@ -200,6 +213,7 @@
                 }
 
                 ${stepDescription}{
+                    color: #4A4A4A;
                     font-size: 18px;
                     font-weight: 400;
                     margin-bottom: 20px;
@@ -214,13 +228,83 @@
                     border-radius: 20px;
                     font-weight: 600;
                     cursor: pointer;
+                    transition: all 0.3s ease;
+                    border: none;
+                }
+
+                ${button}:hover{
+                    opacity: 0.8;
+                }
+
+                ${userForm}{
+                    width: 100%;
+                    max-width: 500px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+
+                ${formGroup}{
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                ${formGroup} label{
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 14px;
+                    color: #374151;
+                    cursor: pointer;
+                }
+
+                ${formGroup} input{
+                    padding: 12px 16px;
+                    border: 2px solid #E5E7EB;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    transition: all 0.3s ease;
+                }
+
+                ${formGroup} input[type="checkbox"]{
+                    width: 18px;
+                    height: 18px;
+                }
+
+                ${phoneGroup}{
+                    display: flex;
+                    gap: 10px;
+                }
+
+                ${phoneGroup} select{
+                    padding: 12px 16px;
+                    border: 2px solid #E5E7EB;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    transition: all 0.3s ease;
+                }
+
+                ${phoneGroup} input{
+                    width: 100%;
+                    padding: 12px 16px;
+                    border: 2px solid #E5E7EB;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    transition: all 0.3s ease;
                 }
 
                 ${show}{
                     display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
+                    animation: fadeIn 2s ease;
+                }
+
+                @keyframes fadeIn{
+                    from{
+                        opacity: 0;
+                    }
+                    to{
+                        opacity: 1;
+                    }
                 }
             </style>
         `;
@@ -243,7 +327,7 @@
         $(outerHTML).appendTo('body');
 
         self.renderStep('landing');
-        
+
     };
 
     self.renderStep = (step) => {
@@ -285,9 +369,10 @@
     }
 
     self.landingHTML = () => {
-        const { stepContent, stepTitle, stepDescription, button } = classes;
-        const { title, description, button: buttonText } = config.landing;
+        const { stepContent, stepTitle, stepDescription, button, stepImage } = classes;
+        const { title, description, button: buttonText, image: imageUrl } = config.landing;
         return `
+            <img src="${imageUrl}" alt="${title}" class="${stepImage}">
             <h2 class="${stepTitle}">${title}</h2>
             <p class="${stepDescription}">${description}</p>
             <div class="${button}">${buttonText}</div>
@@ -299,34 +384,32 @@
         const { title, consent, button: buttonText } = config.userInfo;
 
         return `
-            <div class="${stepContent}">
-                <h2 class="${stepTitle}">${title}</h2>
-                <form class="${userForm}">
-                    <div class="${formGroup}">
-                        <label>
-                            <input type="checkbox" name="consent" ${state.consent ? 'checked' : ''}>
-                            ${consent}
-                        </label>
-                    </div>
-                    <div class="${formGroup}">
-                        <input type="text" name="name" placeholder="Full Name" value="${state.userInfo.name}">
-                    </div>
-                    <div class="${formGroup}">
-                        <input type="email" name="email" placeholder="Email" value="${state.userInfo.email}">
-                    </div>
-                    <div class="${phoneGroup}">
-                        <select name="dialCode">
-                            <option value="+90" ${state.userInfo.dialCode === '+90' ? 'selected' : ''}>Turkiye</option>
-                            <option value="+1" ${state.userInfo.dialCode === '+1' ? 'selected' : ''}>United States</option>
-                            <option value="+49" ${state.userInfo.dialCode === '+49' ? 'selected' : ''}>Germany</option>
-                            <option value="+44" ${state.userInfo.dialCode === '+44' ? 'selected' : ''}>United Kingdom</option>
-                            <option value="+33" ${state.userInfo.dialCode === '+33' ? 'selected' : ''}>France</option>
-                        </select>
-                        <input type="tel" name="phone" placeholder="Phone" value="${state.userInfo.phone}">
-                    </div>
-                    <button type="submit" class="${button}">${buttonText}</button>
-                </form>
-            </div>
+            <h2 class="${stepTitle}">${title}</h2>
+            <form class="${userForm}">
+                <div class="${formGroup}">
+                    <label>
+                        <input type="checkbox" name="consent" ${state.consent ? 'checked' : ''}>
+                        ${consent}
+                    </label>
+                </div>
+                <div class="${formGroup}">
+                    <input type="text" name="name" placeholder="Full Name" value="${state.userInfo.name}">
+                </div>
+                <div class="${formGroup}">
+                    <input type="email" name="email" placeholder="Email" value="${state.userInfo.email}">
+                </div>
+                <div class="${phoneGroup}">
+                    <select name="dialCode">
+                        ${config.userInfo.countries.map(country => `
+                            <option value="${country.value}" ${state.userInfo.dialCode === country.value ? 'selected' : ''}>
+                                ${country.label}
+                            </option>
+                        `).join('')}
+                    </select>
+                    <input type="tel" name="phone" placeholder="Phone" value="${state.userInfo.phone}">
+                </div>
+                <button type="submit" class="${button}">${buttonText}</button>
+            </form>
         `;
     }
 
@@ -335,43 +418,13 @@
         const { title, options, button: buttonText } = config.skinType;
 
         return `
-            <div class="${stepContent}">
-                <h2 class="${stepTitle}">${title}</h2>
-                <div>
-                    <form class="${surveyForm}">
-                        <div class="${radioGroup}">
-                            ${options.map(item => `
-                                <label class="${radioOption}">
-                                    <input type="radio" name="skinType" value="${item.value}" ${state.answers.skinType === item.value ? 'checked' : ''}>
-                                    <span class="${optionText}">
-                                        <strong>${item.text}</strong>
-                                        <small>${item.desc}</small>
-                                    </span>
-                                </label>
-                            `).join('')}
-                        </div>
-                        <button type="submit" class="${button}">${buttonText}</button>
-                    </form>
-                </div>
-            </div>
-        `;
-    }
-
-    self.concernHTML = () => {
-        const { stepContent, stepTitle, surveyForm, checkboxGroup, checkboxOption, optionText, button } = classes;
-        const { title, button: buttonText, options } = config.concern;
-
-        const concernOptions = options[state.answers.skinType] || options.default;
-
-        return `
-            <div class="${stepContent}">
-                <h2 class="${stepTitle}">${title}</h2>
+            <h2 class="${stepTitle}">${title}</h2>
+            <div>
                 <form class="${surveyForm}">
-                    <div class="${checkboxGroup}">
-                        ${concernOptions.map(item => `
-                            <label class="${checkboxOption}">
-                                <input type="checkbox" name="concern" value="${item.value}" 
-                                    ${(state.answers.concern || []).includes(item.value) ? 'checked' : ''}>
+                    <div class="${radioGroup}">
+                        ${options.map(item => `
+                            <label class="${radioOption}">
+                                <input type="radio" name="skinType" value="${item.value}" ${state.answers.skinType === item.value ? 'checked' : ''}>
                                 <span class="${optionText}">
                                     <strong>${item.text}</strong>
                                     <small>${item.desc}</small>
@@ -382,6 +435,32 @@
                     <button type="submit" class="${button}">${buttonText}</button>
                 </form>
             </div>
+        `;
+    }
+
+    self.concernHTML = () => {
+        const { stepContent, stepTitle, surveyForm, checkboxGroup, checkboxOption, optionText, button } = classes;
+        const { title, button: buttonText } = config.concern;
+
+        const concernOptions = config.concern[state.answers.skinType] || config.concern.default;
+
+        return `
+            <h2 class="${stepTitle}">${title}</h2>
+            <form class="${surveyForm}">
+                <div class="${checkboxGroup}">
+                    ${concernOptions.map(item => `
+                        <label class="${checkboxOption}">
+                            <input type="checkbox" name="concern" value="${item.value}" 
+                                ${(state.answers.concern || []).includes(item.value) ? 'checked' : ''}>
+                            <span class="${optionText}">
+                                <strong>${item.text}</strong>
+                                <small>${item.desc}</small>
+                            </span>
+                        </label>
+                    `).join('')}
+                </div>
+                <button type="submit" class="${button}">${buttonText}</button>
+            </form>
         `;
     }
 
@@ -390,28 +469,72 @@
         const { title, button: buttonText, options } = config.routine;
 
         return `
-            <div class="${stepContent}">
-                <h2 class="${stepTitle}">${title}</h2>
-                <form class="${surveyForm}">
-                    <div class="${radioGroup}">
-                        ${options.map(item => `
-                            <label class="${radioOption}">
-                                <input type="radio" name="routine" value="${item.value}" ${state.answers.routine === item.value ? 'checked' : ''}>
-                                <span class="${optionText}">
-                                    <strong>${item.text}</strong>
-                                    <small>${item.desc}</small>
-                                </span>
-                            </label>
-                        `).join('')}
-                    </div>
-                    <button type="submit" class="${button}">${buttonText}</button>
-                </form>
-            </div>
+            <h2 class="${stepTitle}">${title}</h2>
+            <form class="${surveyForm}">
+                <div class="${radioGroup}">
+                    ${options.map(item => `
+                        <label class="${radioOption}">
+                            <input type="radio" name="routine" value="${item.value}" ${state.answers.routine === item.value ? 'checked' : ''}>
+                            <span class="${optionText}">
+                                <strong>${item.text}</strong>
+                                <small>${item.desc}</small>
+                            </span>
+                        </label>
+                    `).join('')}
+                </div>
+                <button type="submit" class="${button}">${buttonText}</button>
+            </form>
         `;
     }
 
     self.setEvents = () => {
+        $(document).on('click', '.ins-button', (event) => {
+            if (state.currentStep === 'landing') {
+                event.preventDefault();
+                self.renderStep('userInfo');
+            }
+        });
+
+        $(document).on('submit', 'form', (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const { currentStep } = state;
+
+            if (currentStep === 'userInfo') {
+                state.consent = formData.get('consent') === 'on';
+                state.userInfo = {
+                    name: formData.get('name') || '',
+                    email: formData.get('email') || '',
+                    phone: formData.get('phone') || '',
+                    dialCode: formData.get('dialCode') || ''
+                };
+                self.renderStep('skinType');
+            }
+
+            if (currentStep === 'skinType') {
+                const skinType = formData.get('skinType');
+                state.answers.skinType = skinType;
+
+                self.renderStep('concern');
+            }
+
+            if (currentStep === 'concern') {
+                const concerns = formData.getAll('concern');
+                state.answers.concern = concerns;
+                
+                self.renderStep('routine');
+            }
+
+            if (currentStep === 'routine') {
+                const routine = formData.get('routine');
+                state.answers.routine = routine;
+
+                self.renderStep('results');
+            }
+        });
     };
+
 
     self.init();
 })({});
