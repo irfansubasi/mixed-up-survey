@@ -97,6 +97,7 @@
         stepContainer: 'ins-step-container',
         stepContent: 'ins-step-content',
         stepTitle: 'ins-step-title',
+        stepDescription: 'ins-step-description',
         userForm: 'ins-user-form',
         formGroup: 'ins-form-group',
         phoneGroup: 'ins-phone-group',
@@ -140,10 +141,17 @@
 
     self.buildCSS = () => {
         const { style } = classes;
-        const { modalOverlay, modal, stepContainer, stepTitle, userForm, formGroup, phoneGroup, button, surveyForm,
-            optionText, checkboxGroup, checkboxOption, radioGroup, radioOption } = selectors;
+        const { modalOverlay, modal, show, stepContent, modalContent, stepContainer, wrapper, stepTitle, stepDescription, button } = selectors;
         const customStyle = `
             <style class="${style}">
+
+                ${wrapper} *{
+                    box-sizing: border-box;
+                    margin: 0;
+                    padding: 0;
+                    font-family: 'Inter', sans-serif;
+                }
+
                 ${modalOverlay}{
                     position: fixed;
                     background-color: rgba(0, 0, 0, 0.6);
@@ -160,12 +168,59 @@
                     top: 50%;
                     left: 50%;
                     transform: translate(-50%, -50%);
-                    width: 500px;
-                    height: 800px;
+                    width: 700px;
+                    height: 700px;
+                    padding: 50px;
+                }
+
+                ${modalContent}{
+                    height: 100%;
+                    width: 100%;
+                }
+
+                ${stepContainer}{
+                    overflow-y: auto;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100%;
+                    width: 100%;
+                }
+
+                ${stepContent}{
+                    display: none;
+                }
+
+                ${stepTitle}{
+                    font-size: 25px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    margin-bottom: 20px;
+                }
+
+                ${stepDescription}{
+                    font-size: 18px;
+                    font-weight: 400;
+                    margin-bottom: 20px;
+                    max-width: 80%;
+                    text-align: center;
+                }
+
+                ${button}{
+                    background-color: #F08000;
+                    color: #fff;
+                    padding: 10px 20px;
+                    border-radius: 20px;
+                    font-weight: 600;
+                    cursor: pointer;
                 }
 
                 ${show}{
-                    display: block;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
                 }
             </style>
         `;
@@ -186,11 +241,33 @@
             </div>
         `;
         $(outerHTML).appendTo('body');
+
+        self.renderStep('landing');
         
     };
 
-    self.setEvents = () => {
-    };
+    self.renderStep = (step) => {
+        const { stepContent, stepContainer } = selectors;
+        const { show, stepContent: stepContentClass } = classes;
+
+        const existingStep = $(stepContainer).find(`[data-step="${step}"]`);
+
+        if (existingStep.length > 0) {
+            $(stepContainer).find(stepContent).removeClass(show);
+            existingStep.addClass(show);
+            return;
+        }
+
+        const html = self.getStepHTML(step);
+        const newStep = $(`<div class="${stepContentClass}" data-step="${step}">${html}</div>`);
+
+        $(stepContainer).append(newStep);
+
+        $(stepContainer).find(stepContent).removeClass(show);
+        newStep.addClass(show);
+
+        state.currentStep = step;
+    }
 
     self.getStepHTML = (step) => {
         switch (step) {
@@ -208,14 +285,12 @@
     }
 
     self.landingHTML = () => {
-        const { stepContent, stepTitle, button } = classes;
+        const { stepContent, stepTitle, stepDescription, button } = classes;
         const { title, description, button: buttonText } = config.landing;
         return `
-            <div class="${stepContent}">
-                <h2 class="${stepTitle}">${title}</h2>
-                <p>${description}</p>
-                <div class="${button}">${buttonText}</div>
-            </div>
+            <h2 class="${stepTitle}">${title}</h2>
+            <p class="${stepDescription}">${description}</p>
+            <div class="${button}">${buttonText}</div>
         `;
     }
 
@@ -334,6 +409,9 @@
             </div>
         `;
     }
+
+    self.setEvents = () => {
+    };
 
     self.init();
 })({});
