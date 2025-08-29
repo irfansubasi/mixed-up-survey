@@ -31,17 +31,20 @@
         skinType: {
             title: 'What\'s your skin type?',
             options: [
+                { value: 'normal', text: 'Normal', desc: 'Balanced, few imperfections' },
                 { value: 'oily', text: 'Oily', desc: 'Shiny, enlarged pores, prone to breakouts' },
                 { value: 'dry', text: 'Dry', desc: 'Tight, flaky, rough texture' },
                 { value: 'combination', text: 'Combination', desc: 'Oily T-zone, dry cheeks' },
                 { value: 'sensitive', text: 'Sensitive', desc: 'Easily irritated, redness, reactions' },
-                { value: 'normal', text: 'Normal', desc: 'Balanced, few imperfections' },
             ],
             button: 'Continue',
         },
         concern: {
             title: 'What are your main skin concerns?',
             button: 'Continue',
+            errors: {
+                concern: 'Please select at least one concern!',
+            },
             oily: [
                 { value: 'acne', text: 'Acne & Breakouts', desc: 'Pimples, blackheads, whiteheads' },
                 { value: 'pores', text: 'Large Pores', desc: 'Enlarged, visible pores' },
@@ -601,9 +604,11 @@
             <div>
                 <form class="${surveyForm}">
                     <div class="${radioGroup}">
-                        ${options.map(item => `
+                        ${options.map((item, index) => `
                             <label class="${radioOption}">
-                                <input type="radio" name="skinType" value="${item.value}" ${state.answers.skinType === item.value ? 'checked' : ''}>
+                                <input type="radio" name="skinType" value="${item.value}"
+                                ${state.answers.skinType === item.value ? 'checked' : ''}
+                                ${!state.answers.skinType && index === 0 ? 'checked' : ''}>
                                 <span class="${optionText}">
                                     <strong>${item.text}</strong>
                                     <small>${item.desc}</small>
@@ -618,8 +623,8 @@
     }
 
     self.concernHTML = () => {
-        const { stepContent, stepTitle, surveyForm, checkboxGroup, checkboxOption, optionText, button } = classes;
-        const { title, button: buttonText } = config.concern;
+        const { stepContent, stepTitle, surveyForm, checkboxGroup, checkboxOption, optionText, button, errorMessage } = classes;
+        const { title, button: buttonText, errors } = config.concern;
 
         const concernOptions = config.concern[state.answers.skinType] || config.concern.default;
 
@@ -638,6 +643,7 @@
                         </label>
                     `).join('')}
                 </div>
+                <div class="${errorMessage}" name="concern">${errors.concern}</div>
                 <button type="submit" class="${button}">${buttonText}</button>
             </form>
         `;
@@ -651,9 +657,11 @@
             <h2 class="${stepTitle}">${title}</h2>
             <form class="${surveyForm}">
                 <div class="${radioGroup}">
-                    ${options.map(item => `
+                    ${options.map((item, index) => `
                         <label class="${radioOption}">
-                            <input type="radio" name="routine" value="${item.value}" ${state.answers.routine === item.value ? 'checked' : ''}>
+                            <input type="radio" name="routine" value="${item.value}"
+                            ${state.answers.routine === item.value ? 'checked' : ''}
+                            ${!state.answers.routine && index === 0 ? 'checked' : ''}>
                             <span class="${optionText}">
                                 <strong>${item.text}</strong>
                                 <small>${item.desc}</small>
@@ -716,7 +724,7 @@
 
             switch (currentStep) {
                 case 'userInfo':
-                    if (!self.validateForm(formData)) {
+                    if (!self.validateForm(formData, currentStep)) {
                         return;
                     }
         
@@ -735,6 +743,9 @@
                     self.renderStep('concern');
                     break;
                 case 'concern':
+                    if (!self.validateForm(formData, currentStep)) {
+                        return;
+                    }
                     const concerns = formData.getAll('concern');
                     state.answers.concern = concerns;
                     self.renderStep('routine');
@@ -748,56 +759,65 @@
         });
     };
 
-    self.validateForm = (formData) => {
+    self.validateForm = (formData, currentStep) => {
         const { errorMessage } = selectors;
         const { show } = classes;
         const { consent: consentText, name: nameText, email: emailText, emailInvalid: emailInvalidText, phone: phoneText, phoneInvalid: phoneInvalidText } = config.userInfo.errors;
-        
-        const consent = formData.get('consent');
-        const email = formData.get('email');
-        const name = formData.get('name');
-        const phone = formData.get('phone');
-        const dialCode = formData.get('dialCode');
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const phoneRegexByCountry = {
-            "+90": /^[1-9][0-9]{9}$/,
-            "+1": /^[2-9][0-9]{9}$/,
-            "+49": /^[1-9][0-9]{6,13}$/,
-            "+44": /^[1-9][0-9]{9}$/,
-            "+33": /^[1-9][0-9]{8}$/,
-        };
-
-        $(errorMessage).removeClass(show);
-
+        const { concern: concernText } = config.concern.errors;
         let hasError = false;
 
-        if (consent !== 'on') {
-            $(`${errorMessage}[name="consent"]`).text(consentText).addClass(show);
-            hasError = true;
+        if (currentStep === 'userInfo') {
+            const consent = formData.get('consent');
+            const email = formData.get('email');
+            const name = formData.get('name');
+            const phone = formData.get('phone');
+            const dialCode = formData.get('dialCode');
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegexByCountry = {
+                "+90": /^[1-9][0-9]{9}$/,
+                "+1": /^[2-9][0-9]{9}$/,
+                "+49": /^[1-9][0-9]{6,13}$/,
+                "+44": /^[1-9][0-9]{9}$/,
+                "+33": /^[1-9][0-9]{8}$/,
+            };
+
+            $(errorMessage).removeClass(show);
+
+            if (consent !== 'on') {
+                $(`${errorMessage}[name="consent"]`).text(consentText).addClass(show);
+                hasError = true;
+            }
+
+            if (!name) {
+                $(`${errorMessage}[name="name"]`).text(nameText).addClass(show);
+                hasError = true;
+            }
+
+            if (!email) {
+                $(`${errorMessage}[name="email"]`).text(emailText).addClass(show);
+                hasError = true;
+            }else if(!emailRegex.test(email)) {
+                $(`${errorMessage}[name="email"]`).text(emailInvalidText).addClass(show);
+                hasError = true;
+            }
+            
+            if (!phone) {
+                $(`${errorMessage}[name="phone"]`).text(phoneText).addClass(show);
+                hasError = true;
+            }else if (!phoneRegexByCountry[dialCode].test(phone)) {
+                $(`${errorMessage}[name="phone"]`).text(phoneInvalidText).addClass(show);
+                hasError = true;
+            }
         }
 
-        if (!name) {
-            $(`${errorMessage}[name="name"]`).text(nameText).addClass(show);
-            hasError = true;
+        if(currentStep === 'concern') {
+            const concerns = formData.getAll('concern');
+            if(concerns.length === 0) {
+                $(`${errorMessage}[name="concern"]`).text(concernText).addClass(show);
+                hasError = true;
+            }
         }
-
-        if (!email) {
-            $(`${errorMessage}[name="email"]`).text(emailText).addClass(show);
-            hasError = true;
-        }else if(!emailRegex.test(email)) {
-            $(`${errorMessage}[name="email"]`).text(emailInvalidText).addClass(show);
-            hasError = true;
-        }
-        
-        if (!phone) {
-            $(`${errorMessage}[name="phone"]`).text(phoneText).addClass(show);
-            hasError = true;
-        }else if (!phoneRegexByCountry[dialCode].test(phone)) {
-            $(`${errorMessage}[name="phone"]`).text(phoneInvalidText).addClass(show);
-            hasError = true;
-        }
-
         return !hasError;
     }
 
