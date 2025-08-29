@@ -19,6 +19,13 @@
                 { value: '+44', label: 'United Kingdom' },
                 { value: '+33', label: 'France' },
             ],
+            errors: {
+                consent: 'You can\'t continue without consent!',
+                name: 'Please enter your name!',
+                email: 'Please enter your email address! (example@gmail.com)',
+                emailInvalid: 'Please enter a valid email address! (example@gmail.com)',
+                phone: 'Please enter your phone number!',
+            }
         },
         skinType: {
             title: 'What\'s your skin type?',
@@ -109,6 +116,7 @@
         radioGroup: 'ins-radio-group',
         radioOption: 'ins-radio-option',
         show: 'ins-show',
+        errorMessage: 'ins-error-message',
     };
 
     const selectors = Object.keys(classes).reduce((createdSelector, key) => (
@@ -142,7 +150,7 @@
     self.buildCSS = () => {
         const { style } = classes;
         const { modalOverlay, modal, show, stepContent, modalContent, stepContainer, wrapper, stepTitle, stepDescription,
-            button, stepImage, userForm, formGroup, phoneGroup, radioGroup, optionText, radioOption, checkboxGroup, checkboxOption } = selectors;
+            button, stepImage, userForm, formGroup, phoneGroup, radioGroup, optionText, radioOption, checkboxGroup, checkboxOption, errorMessage } = selectors;
         const customStyle = `
             <style class="${style}">
 
@@ -361,6 +369,14 @@
                     gap: 10px;
                 }
 
+                ${errorMessage}{
+                    display: none;
+                    color: #F08000;
+                    font-size: 14px;
+                    font-weight: 400;
+                    margin-top: 5px;
+                }
+
                 ${show}{
                     display: flex;
                     animation: fadeIn 2s ease;
@@ -445,8 +461,8 @@
     }
 
     self.userInfoHTML = () => {
-        const { stepContent, stepTitle, userForm, formGroup, phoneGroup, button } = classes;
-        const { title, consent, button: buttonText } = config.userInfo;
+        const { stepContent, stepTitle, userForm, formGroup, phoneGroup, button, errorMessage } = classes;
+        const { title, consent, button: buttonText, errors } = config.userInfo;
 
         return `
             <h2 class="${stepTitle}">${title}</h2>
@@ -456,12 +472,15 @@
                         <input type="checkbox" name="consent" ${state.consent ? 'checked' : ''}>
                         ${consent}
                     </label>
+                    <div class="${errorMessage}" name="consent">${errors.consent}</div>
                 </div>
                 <div class="${formGroup}">
                     <input type="text" name="name" placeholder="Full Name" value="${state.userInfo.name}">
+                    <div class="${errorMessage}" name="name">${errors.name}</div>
                 </div>
                 <div class="${formGroup}">
-                    <input type="email" name="email" placeholder="Email" value="${state.userInfo.email}">
+                    <input type="text" name="email" placeholder="Email" value="${state.userInfo.email}">
+                    <div class="${errorMessage}" name="email">${errors.email}</div>
                 </div>
                 <div class="${phoneGroup}">
                     <select name="dialCode">
@@ -473,6 +492,7 @@
                     </select>
                     <input type="tel" name="phone" placeholder="Phone" value="${state.userInfo.phone}">
                 </div>
+                <div class="${errorMessage}" name="phone">${errors.phone}</div>
                 <button type="submit" class="${button}">${buttonText}</button>
             </form>
         `;
@@ -567,6 +587,10 @@
             const { currentStep } = state;
 
             if (currentStep === 'userInfo') {
+                if (!self.validateForm(formData)) {
+                    return;
+                }
+
                 state.consent = formData.get('consent') === 'on';
                 state.userInfo = {
                     name: formData.get('name') || '',
@@ -600,6 +624,45 @@
         });
     };
 
+    self.validateForm = (formData) => {
+        const { errorMessage } = selectors;
+        const { show } = classes;
+        const { consent, email, name, phone } = formData;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        $(errorMessage).removeClass(show);
+
+        let hasError = false;
+
+        switch (true) {
+            case !consent:
+                $(`${errorMessage}[name="consent"]`).text(config.userInfo.errors.consent).addClass(show);
+                hasError = true;
+                break;
+                
+            case !name:
+                $(`${errorMessage}[name="name"]`).text(config.userInfo.errors.name).addClass(show);
+                hasError = true;
+                break;
+                
+            case !email:
+                $(`${errorMessage}[name="email"]`).text(config.userInfo.errors.email).addClass(show);
+                hasError = true;
+                break;
+                
+            case !emailRegex.test(email):
+                $(`${errorMessage}[name="email"]`).text(config.userInfo.errors.emailInvalid).addClass(show);
+                hasError = true;
+                break;
+                
+            case !phone:
+                $(`${errorMessage}[name="phone"]`).text(config.userInfo.errors.phone).addClass(show);
+                hasError = true;
+                break;
+        }
+
+        return !hasError;
+    }
 
     self.init();
 })({});
