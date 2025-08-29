@@ -74,123 +74,120 @@
                 { value: 'extensive', text: 'Extensive', desc: '7+ products, multiple actives' }
             ]
         },
-        products: {
-            oily: {
-                acne: [
-                    { name: 'Salicylic Acid Cleanser', price: '$25', description: 'Fights acne and unclogs pores', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Benzoyl Peroxide Treatment', price: '$18', description: 'Targets acne-causing bacteria', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Niacinamide Serum', price: '$22', description: 'Reduces inflammation and breakouts', image: 'https://via.placeholder.com/150x150' }
-                ],
-                pores: [
-                    { name: 'Clay Mask', price: '$15', description: 'Deep cleanses and tightens pores', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Pore Minimizing Toner', price: '$20', description: 'Refines and tightens pore appearance', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Retinol Treatment', price: '$35', description: 'Improves skin texture and reduces pores', image: 'https://via.placeholder.com/150x150' }
-                ],
-                shine: [
-                    { name: 'Oil-Free Moisturizer', price: '$20', description: 'Hydrates without adding shine', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Mattifying Primer', price: '$28', description: 'Controls oil throughout the day', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Blotting Papers', price: '$8', description: 'Quick oil absorption on-the-go', image: 'https://via.placeholder.com/150x150' }
-                ],
-                texture: [
-                    { name: 'AHA Exfoliating Serum', price: '$30', description: 'Smooths rough, bumpy skin', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Gentle Exfoliating Scrub', price: '$18', description: 'Removes dead skin cells', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Vitamin C Serum', price: '$25', description: 'Brightens and evens skin tone', image: 'https://via.placeholder.com/150x150' }
-                ]
-            },
-            dry: {
-                hydration: [
-                    { name: 'Hyaluronic Acid Serum', price: '$30', description: 'Intense hydration boost', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Rich Night Cream', price: '$35', description: 'Deep moisturizing overnight', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Hydrating Face Mask', price: '$22', description: 'Weekly moisture treatment', image: 'https://via.placeholder.com/150x150' }
-                ],
-                flakiness: [
-                    { name: 'Gentle Exfoliating Toner', price: '$18', description: 'Removes dead skin cells', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Repairing Balm', price: '$25', description: 'Soothes and repairs dry skin', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Ceramide Moisturizer', price: '$28', description: 'Strengthens skin barrier', image: 'https://via.placeholder.com/150x150' }
-                ],
-                'fine-lines': [
-                    { name: 'Anti-Aging Night Cream', price: '$45', description: 'Targets fine lines and wrinkles', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Retinol Serum', price: '$40', description: 'Stimulates collagen production', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Peptide Eye Cream', price: '$32', description: 'Reduces under-eye fine lines', image: 'https://via.placeholder.com/150x150' }
-                ],
-                dullness: [
-                    { name: 'Vitamin C Brightening Serum', price: '$28', description: 'Restores radiance and glow', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Exfoliating Glow Mask', price: '$24', description: 'Reveals brighter, smoother skin', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Illuminating Primer', price: '$26', description: 'Instant glow and radiance', image: 'https://via.placeholder.com/150x150' }
-                ]
-            },
-            normal: {
-                aging: [
-                    { name: 'Anti-Aging Day Cream', price: '$38', description: 'Prevents signs of aging', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Collagen Boosting Serum', price: '$42', description: 'Firms and lifts skin', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'SPF 50 Sunscreen', price: '$20', description: 'Essential daily protection', image: 'https://via.placeholder.com/150x150' }
-                ],
-                'dark-spots': [
-                    { name: 'Dark Spot Corrector', price: '$35', description: 'Fades hyperpigmentation', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Brightening Treatment', price: '$30', description: 'Even skin tone', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Vitamin C Complex', price: '$32', description: 'Reduces sun damage', image: 'https://via.placeholder.com/150x150' }
-                ],
-                sensitivity: [
-                    { name: 'Gentle Calming Cleanser', price: '$18', description: 'Soothes sensitive skin', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Anti-Redness Serum', price: '$28', description: 'Reduces irritation and redness', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Hypoallergenic Moisturizer', price: '$24', description: 'Fragrance-free hydration', image: 'https://via.placeholder.com/150x150' }
-                ],
-                hydration: [
-                    { name: 'Balanced Moisturizer', price: '$22', description: 'Perfect moisture balance', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Hydrating Essence', price: '$26', description: 'Lightweight hydration boost', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Moisture Lock Cream', price: '$30', description: 'Long-lasting hydration', image: 'https://via.placeholder.com/150x150' }
-                ]
-            },
-            combination: {
-                aging: [
-                    { name: 'Zone-Specific Treatment', price: '$40', description: 'Different care for T-zone and cheeks', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Balanced Anti-Aging Serum', price: '$35', description: 'Works for all skin areas', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Multi-Zone Moisturizer', price: '$28', description: 'Adapts to different skin needs', image: 'https://via.placeholder.com/150x150' }
-                ],
-                'dark-spots': [
-                    { name: 'Targeted Spot Treatment', price: '$32', description: 'Precise dark spot correction', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Even Tone Serum', price: '$30', description: 'Balances combination skin tone', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Brightening Mask', price: '$25', description: 'Weekly treatment for all zones', image: 'https://via.placeholder.com/150x150' }
-                ],
-                sensitivity: [
-                    { name: 'Gentle Zone Cleanser', price: '$20', description: 'Cleans without over-drying', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Calming T-Zone Treatment', price: '$26', description: 'Soothes oily sensitive areas', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Adaptive Moisturizer', price: '$24', description: 'Adjusts to each skin zone', image: 'https://via.placeholder.com/150x150' }
-                ],
-                hydration: [
-                    { name: 'Dual-Zone Hydrator', price: '$28', description: 'Different hydration for each zone', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Balancing Essence', price: '$26', description: 'Maintains perfect moisture balance', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Smart Moisturizer', price: '$30', description: 'Automatically adjusts to skin needs', image: 'https://via.placeholder.com/150x150' }
-                ]
-            },
-            sensitive: {
-                aging: [
-                    { name: 'Gentle Anti-Aging Cream', price: '$38', description: 'Anti-aging without irritation', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Sensitive Skin Serum', price: '$32', description: 'Fragrance-free age prevention', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Mild Retinol Alternative', price: '$35', description: 'Gentle anti-aging benefits', image: 'https://via.placeholder.com/150x150' }
-                ],
-                'dark-spots': [
-                    { name: 'Gentle Brightening Cream', price: '$28', description: 'Fades spots without irritation', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Sensitive Skin Corrector', price: '$30', description: 'Mild dark spot treatment', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Hypoallergenic Brightener', price: '$26', description: 'Safe for sensitive skin', image: 'https://via.placeholder.com/150x150' }
-                ],
-                sensitivity: [
-                    { name: 'Ultra-Gentle Cleanser', price: '$18', description: 'Cleanses without stripping', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Anti-Redness Treatment', price: '$32', description: 'Calms and soothes irritation', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Barrier Repair Cream', price: '$34', description: 'Strengthens sensitive skin', image: 'https://via.placeholder.com/150x150' }
-                ],
-                hydration: [
-                    { name: 'Sensitive Skin Moisturizer', price: '$24', description: 'Hydrates without causing reactions', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Calming Hydration Serum', price: '$28', description: 'Soothes while hydrating', image: 'https://via.placeholder.com/150x150' },
-                    { name: 'Fragrance-Free Balm', price: '$22', description: 'Intensive moisture for sensitive skin', image: 'https://via.placeholder.com/150x150' }
-                ]
-            }
-        }
     };
 
-    const storageConfig = {};
-
-    const eventConfig = {};
+    const productsConfig = {
+        oily: {
+            acne: [
+                { name: 'Salicylic Acid Cleanser', price: '$25', description: 'Fights acne and unclogs pores', image: 'https://placehold.co/150x150' },
+                { name: 'Benzoyl Peroxide Treatment', price: '$18', description: 'Targets acne-causing bacteria', image: 'https://placehold.co/150x150' },
+                { name: 'Niacinamide Serum', price: '$22', description: 'Reduces inflammation and breakouts', image: 'https://placehold.co/150x150' }
+            ],
+            pores: [
+                { name: 'Clay Mask', price: '$15', description: 'Deep cleanses and tightens pores', image: 'https://placehold.co/150x150' },
+                { name: 'Pore Minimizing Toner', price: '$20', description: 'Refines and tightens pore appearance', image: 'https://placehold.co/150x150' },
+                { name: 'Retinol Treatment', price: '$35', description: 'Improves skin texture and reduces pores', image: 'https://placehold.co/150x150' }
+            ],
+            shine: [
+                { name: 'Oil-Free Moisturizer', price: '$20', description: 'Hydrates without adding shine', image: 'https://placehold.co/150x150' },
+                { name: 'Mattifying Primer', price: '$28', description: 'Controls oil throughout the day', image: 'https://placehold.co/150x150' },
+                { name: 'Blotting Papers', price: '$8', description: 'Quick oil absorption on-the-go', image: 'https://placehold.co/150x150' }
+            ],
+            texture: [
+                { name: 'AHA Exfoliating Serum', price: '$30', description: 'Smooths rough, bumpy skin', image: 'https://placehold.co/150x150' },
+                { name: 'Gentle Exfoliating Scrub', price: '$18', description: 'Removes dead skin cells', image: 'https://placehold.co/150x150' },
+                { name: 'Vitamin C Serum', price: '$25', description: 'Brightens and evens skin tone', image: 'https://placehold.co/150x150' }
+            ]
+        },
+        dry: {
+            hydration: [
+                { name: 'Hyaluronic Acid Serum', price: '$30', description: 'Intense hydration boost', image: 'https://placehold.co/150x150' },
+                { name: 'Rich Night Cream', price: '$35', description: 'Deep moisturizing overnight', image: 'https://placehold.co/150x150' },
+                { name: 'Hydrating Face Mask', price: '$22', description: 'Weekly moisture treatment', image: 'https://placehold.co/150x150' }
+            ],
+            flakiness: [
+                { name: 'Gentle Exfoliating Toner', price: '$18', description: 'Removes dead skin cells', image: 'https://placehold.co/150x150' },
+                { name: 'Repairing Balm', price: '$25', description: 'Soothes and repairs dry skin', image: 'https://placehold.co/150x150' },
+                { name: 'Ceramide Moisturizer', price: '$28', description: 'Strengthens skin barrier', image: 'https://placehold.co/150x150' }
+            ],
+            'fine-lines': [
+                { name: 'Anti-Aging Night Cream', price: '$45', description: 'Targets fine lines and wrinkles', image: 'https://placehold.co/150x150' },
+                { name: 'Retinol Serum', price: '$40', description: 'Stimulates collagen production', image: 'https://placehold.co/150x150' },
+                { name: 'Peptide Eye Cream', price: '$32', description: 'Reduces under-eye fine lines', image: 'https://placehold.co/150x150' }
+            ],
+            dullness: [
+                { name: 'Vitamin C Brightening Serum', price: '$28', description: 'Restores radiance and glow', image: 'https://placehold.co/150x150' },
+                { name: 'Exfoliating Glow Mask', price: '$24', description: 'Reveals brighter, smoother skin', image: 'https://placehold.co/150x150' },
+                { name: 'Illuminating Primer', price: '$26', description: 'Instant glow and radiance', image: 'https://placehold.co/150x150' }
+            ]
+        },
+        normal: {
+            aging: [
+                { name: 'Anti-Aging Day Cream', price: '$38', description: 'Prevents signs of aging', image: 'https://placehold.co/150x150' },
+                { name: 'Collagen Boosting Serum', price: '$42', description: 'Firms and lifts skin', image: 'https://placehold.co/150x150' },
+                { name: 'SPF 50 Sunscreen', price: '$20', description: 'Essential daily protection', image: 'https://placehold.co/150x150' }
+            ],
+            'dark-spots': [
+                { name: 'Dark Spot Corrector', price: '$35', description: 'Fades hyperpigmentation', image: 'https://placehold.co/150x150' },
+                { name: 'Brightening Treatment', price: '$30', description: 'Even skin tone', image: 'https://placehold.co/150x150' },
+                { name: 'Vitamin C Complex', price: '$32', description: 'Reduces sun damage', image: 'https://placehold.co/150x150' }
+            ],
+            sensitivity: [
+                { name: 'Gentle Calming Cleanser', price: '$18', description: 'Soothes sensitive skin', image: 'https://placehold.co/150x150' },
+                { name: 'Anti-Redness Serum', price: '$28', description: 'Reduces irritation and redness', image: 'https://placehold.co/150x150' },
+                { name: 'Hypoallergenic Moisturizer', price: '$24', description: 'Fragrance-free hydration', image: 'https://placehold.co/150x150' }
+            ],
+            hydration: [
+                { name: 'Balanced Moisturizer', price: '$22', description: 'Perfect moisture balance', image: 'https://placehold.co/150x150' },
+                { name: 'Hydrating Essence', price: '$26', description: 'Lightweight hydration boost', image: 'https://placehold.co/150x150' },
+                { name: 'Moisture Lock Cream', price: '$30', description: 'Long-lasting hydration', image: 'https://placehold.co/150x150' }
+            ]
+        },
+        combination: {
+            aging: [
+                { name: 'Zone-Specific Treatment', price: '$40', description: 'Different care for T-zone and cheeks', image: 'https://placehold.co/150x150' },
+                { name: 'Balanced Anti-Aging Serum', price: '$35', description: 'Works for all skin areas', image: 'https://placehold.co/150x150' },
+                { name: 'Multi-Zone Moisturizer', price: '$28', description: 'Adapts to different skin needs', image: 'https://placehold.co/150x150' }
+            ],
+            'dark-spots': [
+                { name: 'Targeted Spot Treatment', price: '$32', description: 'Precise dark spot correction', image: 'https://placehold.co/150x150' },
+                { name: 'Even Tone Serum', price: '$30', description: 'Balances combination skin tone', image: 'https://placehold.co/150x150' },
+                { name: 'Brightening Mask', price: '$25', description: 'Weekly treatment for all zones', image: 'https://placehold.co/150x150' }
+            ],
+            sensitivity: [
+                { name: 'Gentle Zone Cleanser', price: '$20', description: 'Cleans without over-drying', image: 'https://placehold.co/150x150' },
+                { name: 'Calming T-Zone Treatment', price: '$26', description: 'Soothes oily sensitive areas', image: 'https://placehold.co/150x150' },
+                { name: 'Adaptive Moisturizer', price: '$24', description: 'Adjusts to each skin zone', image: 'https://placehold.co/150x150' }
+            ],
+            hydration: [
+                { name: 'Dual-Zone Hydrator', price: '$28', description: 'Different hydration for each zone', image: 'https://placehold.co/150x150' },
+                { name: 'Balancing Essence', price: '$26', description: 'Maintains perfect moisture balance', image: 'https://placehold.co/150x150' },
+                { name: 'Smart Moisturizer', price: '$30', description: 'Automatically adjusts to skin needs', image: 'https://placehold.co/150x150' }
+            ]
+        },
+        sensitive: {
+            aging: [
+                { name: 'Gentle Anti-Aging Cream', price: '$38', description: 'Anti-aging without irritation', image: 'https://placehold.co/150x150' },
+                { name: 'Sensitive Skin Serum', price: '$32', description: 'Fragrance-free age prevention', image: 'https://placehold.co/150x150' },
+                { name: 'Mild Retinol Alternative', price: '$35', description: 'Gentle anti-aging benefits', image: 'https://placehold.co/150x150' }
+            ],
+            'dark-spots': [
+                { name: 'Gentle Brightening Cream', price: '$28', description: 'Fades spots without irritation', image: 'https://placehold.co/150x150' },
+                { name: 'Sensitive Skin Corrector', price: '$30', description: 'Mild dark spot treatment', image: 'https://placehold.co/150x150' },
+                { name: 'Hypoallergenic Brightener', price: '$26', description: 'Safe for sensitive skin', image: 'https://placehold.co/150x150' }
+            ],
+            sensitivity: [
+                { name: 'Ultra-Gentle Cleanser', price: '$18', description: 'Cleanses without stripping', image: 'https://placehold.co/150x150' },
+                { name: 'Anti-Redness Treatment', price: '$32', description: 'Calms and soothes irritation', image: 'https://placehold.co/150x150' },
+                { name: 'Barrier Repair Cream', price: '$34', description: 'Strengthens sensitive skin', image: 'https://placehold.co/150x150' }
+            ],
+            hydration: [
+                { name: 'Sensitive Skin Moisturizer', price: '$24', description: 'Hydrates without causing reactions', image: 'https://placehold.co/150x150' },
+                { name: 'Calming Hydration Serum', price: '$28', description: 'Soothes while hydrating', image: 'https://placehold.co/150x150' },
+                { name: 'Fragrance-Free Balm', price: '$22', description: 'Intensive moisture for sensitive skin', image: 'https://placehold.co/150x150' }
+            ]
+        }
+    }
 
     const state = {
         currentStep: 'landing',
