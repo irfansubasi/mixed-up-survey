@@ -628,6 +628,7 @@
     self.validateForm = (formData) => {
         const { errorMessage } = selectors;
         const { show } = classes;
+        const { consent: consentText, name: nameText, email: emailText, emailInvalid: emailInvalidText, phone: phoneText, phoneInvalid: phoneInvalidText } = config.userInfo.errors;
         
         const consent = formData.get('consent');
         const email = formData.get('email');
@@ -648,26 +649,30 @@
 
         let hasError = false;
 
-        switch (true) {
-            case consent !== 'on':
-                $(`${errorMessage}[name="consent"]`).text(config.userInfo.errors.consent).addClass(show);
-                hasError = true;
-            case !name:
-                $(`${errorMessage}[name="name"]`).text(config.userInfo.errors.name).addClass(show);
-                hasError = true;
-            case !email:
-                $(`${errorMessage}[name="email"]`).text(config.userInfo.errors.email).addClass(show);
-                hasError = true;
-            case !emailRegex.test(email):
-                $(`${errorMessage}[name="email"]`).text(config.userInfo.errors.emailInvalid).addClass(show);
-                hasError = true;
-            case !phone:
-                $(`${errorMessage}[name="phone"]`).text(config.userInfo.errors.phone).addClass(show);
-                hasError = true;
-            case !phoneRegexByCountry[dialCode].test(phone):
-                $(`${errorMessage}[name="phone"]`).text(config.userInfo.errors.phoneInvalid).addClass(show);
-                hasError = true;
+        if (consent !== 'on') {
+            $(`${errorMessage}[name="consent"]`).text(consentText).addClass(show);
+            hasError = true;
+        }
 
+        if (!name) {
+            $(`${errorMessage}[name="name"]`).text(nameText).addClass(show);
+            hasError = true;
+        }
+
+        if (!email) {
+            $(`${errorMessage}[name="email"]`).text(emailText).addClass(show);
+            hasError = true;
+        }else if(!emailRegex.test(email)) {
+            $(`${errorMessage}[name="email"]`).text(emailInvalidText).addClass(show);
+            hasError = true;
+        }
+        
+        if (!phone) {
+            $(`${errorMessage}[name="phone"]`).text(phoneText).addClass(show);
+            hasError = true;
+        }else if (!phoneRegexByCountry[dialCode].test(phone)) {
+            $(`${errorMessage}[name="phone"]`).text(phoneInvalidText).addClass(show);
+            hasError = true;
         }
 
         return !hasError;
