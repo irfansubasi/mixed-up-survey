@@ -74,6 +74,10 @@
                 { value: 'extensive', text: 'Extensive', desc: '7+ products, multiple actives' }
             ]
         },
+        products: {
+            title: 'Your Personalized Recommendations',
+            button: 'Get Discount Code',
+        }
     };
 
     const productsConfig = {
@@ -110,7 +114,7 @@
                 { name: 'Repairing Balm', price: '$25', description: 'Soothes and repairs dry skin', image: 'https://placehold.co/150x150' },
                 { name: 'Ceramide Moisturizer', price: '$28', description: 'Strengthens skin barrier', image: 'https://placehold.co/150x150' }
             ],
-            'fine-lines': [
+            fineLines: [
                 { name: 'Anti-Aging Night Cream', price: '$45', description: 'Targets fine lines and wrinkles', image: 'https://placehold.co/150x150' },
                 { name: 'Retinol Serum', price: '$40', description: 'Stimulates collagen production', image: 'https://placehold.co/150x150' },
                 { name: 'Peptide Eye Cream', price: '$32', description: 'Reduces under-eye fine lines', image: 'https://placehold.co/150x150' }
@@ -127,7 +131,7 @@
                 { name: 'Collagen Boosting Serum', price: '$42', description: 'Firms and lifts skin', image: 'https://placehold.co/150x150' },
                 { name: 'SPF 50 Sunscreen', price: '$20', description: 'Essential daily protection', image: 'https://placehold.co/150x150' }
             ],
-            'dark-spots': [
+            darkSpots: [
                 { name: 'Dark Spot Corrector', price: '$35', description: 'Fades hyperpigmentation', image: 'https://placehold.co/150x150' },
                 { name: 'Brightening Treatment', price: '$30', description: 'Even skin tone', image: 'https://placehold.co/150x150' },
                 { name: 'Vitamin C Complex', price: '$32', description: 'Reduces sun damage', image: 'https://placehold.co/150x150' }
@@ -149,7 +153,7 @@
                 { name: 'Balanced Anti-Aging Serum', price: '$35', description: 'Works for all skin areas', image: 'https://placehold.co/150x150' },
                 { name: 'Multi-Zone Moisturizer', price: '$28', description: 'Adapts to different skin needs', image: 'https://placehold.co/150x150' }
             ],
-            'dark-spots': [
+            darkSpots: [
                 { name: 'Targeted Spot Treatment', price: '$32', description: 'Precise dark spot correction', image: 'https://placehold.co/150x150' },
                 { name: 'Even Tone Serum', price: '$30', description: 'Balances combination skin tone', image: 'https://placehold.co/150x150' },
                 { name: 'Brightening Mask', price: '$25', description: 'Weekly treatment for all zones', image: 'https://placehold.co/150x150' }
@@ -240,6 +244,12 @@
         optionFlag: 'ins-option-flag',
         optionText: 'ins-option-text',
         rotated: 'ins-rotated',
+        recommendationsContainer: 'ins-recommendations-container',
+        productCard: 'ins-product-card',
+        productImage: 'ins-product-image',
+        productName: 'ins-product-name',
+        productPrice: 'ins-product-price',
+        productDescription: 'ins-product-description',
     };
 
     const selectors = Object.keys(classes).reduce((createdSelector, key) => (
@@ -274,7 +284,8 @@
         const { style } = classes;
         const { modalOverlay, modal, show, stepContent, modalContent, stepContainer, wrapper, stepTitle, stepDescription,
             button, stepImage, userForm, formGroup, phoneGroup, radioGroup, optionText, radioOption, checkboxGroup, checkboxOption, errorMessage,
-            customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag, selectedText, optionFlag, rotated} = selectors;
+            customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag, selectedText, optionFlag, rotated,
+            recommendationsContainer, productCard, productImage, productName, productPrice, productDescription } = selectors;
         const customStyle = `
             <style class="${style}">
 
@@ -566,6 +577,51 @@
                     object-fit: cover;
                 }
 
+                ${recommendationsContainer}{
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 20px;
+                    width: 100%;
+                    max-width: 800px;
+                }
+
+                ${productCard}{
+                    border: 1px solid #E5E7EB;
+                    border-radius: 12px;
+                    padding: 20px;
+                    text-align: center;
+                    background: white;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+
+                ${productImage}{
+                    width: 100%;
+                    height: 150px;
+                    object-fit: cover;
+                    border-radius: 8px;
+                    margin-bottom: 15px;
+                }
+
+                ${productName}{
+                    color: #1F2937;
+                    font-size: 18px;
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                }
+
+                ${productPrice}{
+                    color: #F08000;
+                    font-size: 20px;
+                    font-weight: 700;
+                    margin-bottom: 10px;
+                }
+
+                ${productDescription}{
+                    color: #6B7280;
+                    font-size: 14px;
+                    line-height: 1.4;
+                }
+
                 ${show}{
                     display: flex;
                     animation: fadeIn 2s ease;
@@ -635,6 +691,8 @@
                 return self.concernHTML();
             case 'routine':
                 return self.routineHTML();
+            case 'products':
+                return self.productsHTML();
         }
     }
 
@@ -783,6 +841,42 @@
         `;
     }
 
+    self.getProductRecommendations = () => {
+        const { skinType, concern } = state.answers;
+        const recommendations = [];
+
+        const skinTypeProducts = productsConfig[skinType] || productsConfig.normal;
+
+        concern.forEach(concernItem => {
+            if (skinTypeProducts[concernItem]) {
+                recommendations.push(...skinTypeProducts[concernItem]);
+            }
+        });
+
+        return recommendations;
+    };
+
+    self.productsHTML = () => {
+        const { stepTitle, button, recommendationsContainer, productCard, productImage, productName, productPrice, productDescription } = classes;
+        const { title, button: buttonText } = config.products;
+        const recommendations = self.getProductRecommendations();
+
+        return `
+            <h2 class="${stepTitle}">${title}</h2>
+            <div class="${recommendationsContainer}">
+                ${recommendations.map(product => `
+                    <div class="${productCard}">
+                        <img src="${product.image}" alt="${product.name}" class="${productImage}">
+                        <h3 class="${productName}">${product.name}</h3>
+                        <p class="${productPrice}">${product.price}</p>
+                        <p class="${productDescription}">${product.description}</p>
+                    </div>
+                `).join('')}
+            </div>
+            <button type="button" class="${button}">${buttonText}</button>
+        `;
+    };
+
     self.setEvents = () => {
         const { button, customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag,
             selectedText, optionFlag, optionText } = selectors;
@@ -802,28 +896,28 @@
             $(dropdownOptions).toggle();
             $(dropdownArrow).toggleClass(rotated);
         });
-        
+
         $(document).on('click', dropdownOption, (event) => {
             const value = $(event.currentTarget).data('value');
             const flagSrc = $(event.currentTarget).find(optionFlag).attr('src');
             const text = $(event.currentTarget).find(optionText).text();
-            
+
             $(selectedFlag).attr('src', flagSrc);
             $(selectedText).text(text);
-            
+
             $('select[name="dialCode"]').val(value);
-            
+
             $(dropdownOptions).toggle(false);
             $(dropdownArrow).removeClass(rotated);
         });
-        
+
         $(document).on('click', (event) => {
             if (!$(event.target).closest(customDropdown).length) {
                 $(dropdownOptions).toggle(false);
                 $(dropdownArrow).removeClass(rotated);
             }
         });
-        
+
 
         $(document).on('submit', 'form', (event) => {
             event.preventDefault();
@@ -836,7 +930,7 @@
                     if (!self.validateForm(formData, currentStep)) {
                         return;
                     }
-        
+
                     state.consent = formData.get('consent') === 'on';
                     state.userInfo = {
                         name: formData.get('name') || '',
@@ -862,7 +956,7 @@
                 case 'routine':
                     const routine = formData.get('routine');
                     state.answers.routine = routine;
-                    self.renderStep('results');
+                    self.renderStep('products');
                     break;
             }
         });
@@ -906,23 +1000,23 @@
             if (!email) {
                 $(`${errorMessage}[name="email"]`).text(emailText).addClass(show);
                 hasError = true;
-            }else if(!emailRegex.test(email)) {
+            } else if (!emailRegex.test(email)) {
                 $(`${errorMessage}[name="email"]`).text(emailInvalidText).addClass(show);
                 hasError = true;
             }
-            
+
             if (!phone) {
                 $(`${errorMessage}[name="phone"]`).text(phoneText).addClass(show);
                 hasError = true;
-            }else if (!phoneRegexByCountry[dialCode].test(phone)) {
+            } else if (!phoneRegexByCountry[dialCode].test(phone)) {
                 $(`${errorMessage}[name="phone"]`).text(phoneInvalidText).addClass(show);
                 hasError = true;
             }
         }
 
-        if(currentStep === 'concern') {
+        if (currentStep === 'concern') {
             const concerns = formData.getAll('concern');
-            if(concerns.length === 0) {
+            if (concerns.length === 0) {
                 $(`${errorMessage}[name="concern"]`).text(concernText).addClass(show);
                 hasError = true;
             }
