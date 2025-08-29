@@ -714,41 +714,36 @@
             const formData = new FormData(event.target);
             const { currentStep } = state;
 
-            if (currentStep === 'userInfo') {
-                if (!self.validateForm(formData)) {
-                    return;
-                }
-
-                state.consent = formData.get('consent') === 'on';
-                state.userInfo = {
-                    name: formData.get('name') || '',
-                    email: formData.get('email') || '',
-                    phone: formData.get('phone') || '',
-                    dialCode: formData.get('dialCode') || ''
-                };
-                console.log(state.userInfo);
-                self.renderStep('skinType');
-            }
-
-            if (currentStep === 'skinType') {
-                const skinType = formData.get('skinType');
-                state.answers.skinType = skinType;
-
-                self.renderStep('concern');
-            }
-
-            if (currentStep === 'concern') {
-                const concerns = formData.getAll('concern');
-                state.answers.concern = concerns;
-
-                self.renderStep('routine');
-            }
-
-            if (currentStep === 'routine') {
-                const routine = formData.get('routine');
-                state.answers.routine = routine;
-
-                self.renderStep('results');
+            switch (currentStep) {
+                case 'userInfo':
+                    if (!self.validateForm(formData)) {
+                        return;
+                    }
+        
+                    state.consent = formData.get('consent') === 'on';
+                    state.userInfo = {
+                        name: formData.get('name') || '',
+                        email: formData.get('email') || '',
+                        phone: formData.get('phone') || '',
+                        dialCode: formData.get('dialCode') || ''
+                    };
+                    self.renderStep('skinType');
+                    break;
+                case 'skinType':
+                    const skinType = formData.get('skinType');
+                    state.answers.skinType = skinType;
+                    self.renderStep('concern');
+                    break;
+                case 'concern':
+                    const concerns = formData.getAll('concern');
+                    state.answers.concern = concerns;
+                    self.renderStep('routine');
+                    break;
+                case 'routine':
+                    const routine = formData.get('routine');
+                    state.answers.routine = routine;
+                    self.renderStep('results');
+                    break;
             }
         });
     };
