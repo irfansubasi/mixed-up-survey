@@ -13,11 +13,11 @@
             consent: 'I consent to the collection of my data',
             button: 'Continue',
             countries: [
-                { value: '+90', label: 'Turkiye' },
-                { value: '+1', label: 'United States' },
-                { value: '+49', label: 'Germany' },
-                { value: '+44', label: 'United Kingdom' },
-                { value: '+33', label: 'France' },
+                { value: '+90', label: 'Turkiye', flag: 'https://flagcdn.com/tr.svg' },
+                { value: '+1', label: 'United States', flag: 'https://flagcdn.com/us.svg' },
+                { value: '+49', label: 'Germany', flag: 'https://flagcdn.com/de.svg' },
+                { value: '+44', label: 'United Kingdom', flag: 'https://flagcdn.com/gb.svg' },
+                { value: '+33', label: 'France', flag: 'https://flagcdn.com/fr.svg' },
             ],
             errors: {
                 consent: 'You can\'t continue without consent!',
@@ -118,6 +118,16 @@
         radioOption: 'ins-radio-option',
         show: 'ins-show',
         errorMessage: 'ins-error-message',
+        customDropdown: 'ins-custom-dropdown',
+        dropdownSelected: 'ins-dropdown-selected',
+        dropdownOptions: 'ins-dropdown-options',
+        dropdownOption: 'ins-dropdown-option',
+        dropdownArrow: 'ins-dropdown-arrow',
+        selectedFlag: 'ins-selected-flag',
+        selectedText: 'ins-selected-text',
+        optionFlag: 'ins-option-flag',
+        optionText: 'ins-option-text',
+        rotated: 'ins-rotated',
     };
 
     const selectors = Object.keys(classes).reduce((createdSelector, key) => (
@@ -151,7 +161,8 @@
     self.buildCSS = () => {
         const { style } = classes;
         const { modalOverlay, modal, show, stepContent, modalContent, stepContainer, wrapper, stepTitle, stepDescription,
-            button, stepImage, userForm, formGroup, phoneGroup, radioGroup, optionText, radioOption, checkboxGroup, checkboxOption, errorMessage } = selectors;
+            button, stepImage, userForm, formGroup, phoneGroup, radioGroup, optionText, radioOption, checkboxGroup, checkboxOption, errorMessage,
+            customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag, selectedText, optionFlag, rotated} = selectors;
         const customStyle = `
             <style class="${style}">
 
@@ -286,6 +297,7 @@
                 }
 
                 ${phoneGroup} select{
+                    display: none;
                     padding: 12px 16px;
                     border: 2px solid #E5E7EB;
                     border-radius: 8px;
@@ -378,6 +390,70 @@
                     margin-top: 5px;
                 }
 
+                ${customDropdown} {
+                    position: relative;
+                    width: 120px;
+                }
+                
+                ${dropdownSelected} {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 16px;
+                    border: 2px solid #E5E7EB;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    background: white;
+                }
+                
+                ${dropdownSelected}:hover {
+                    border-color: #F08000;
+                }
+                
+                ${dropdownArrow} {
+                    margin-left: auto;
+                    transition: transform 0.3s ease;
+                }
+                
+                ${dropdownArrow}${rotated} {
+                    transform: rotate(180deg);
+                }
+                
+                ${dropdownOptions} {
+                    display: none;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    border: 2px solid #E5E7EB;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    z-index: 1000;
+                    max-height: 200px;
+                    overflow-y: auto;
+                }
+                
+                ${dropdownOption} {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 16px;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+                }
+                
+                ${dropdownOption}:hover {
+                    background-color: #F3F4F6;
+                }
+                
+                ${selectedFlag},
+                ${optionFlag} {
+                    width: 20px;
+                    height: 15px;
+                    object-fit: cover;
+                }
+
                 ${show}{
                     display: flex;
                     animation: fadeIn 2s ease;
@@ -462,7 +538,8 @@
     }
 
     self.userInfoHTML = () => {
-        const { stepContent, stepTitle, userForm, formGroup, phoneGroup, button, errorMessage } = classes;
+        const { stepContent, stepTitle, userForm, formGroup, phoneGroup, button, errorMessage, customDropdown, dropdownSelected,
+            dropdownOptions, dropdownOption, dropdownArrow, selectedFlag, selectedText, optionFlag, optionText } = classes;
         const { title, consent, button: buttonText, errors } = config.userInfo;
 
         return `
@@ -491,6 +568,22 @@
                             </option>
                         `).join('')}
                     </select>
+                    <div class="${customDropdown}">
+                        <div class="${dropdownSelected}">
+                            <img src="https://flagcdn.com/tr.svg" alt="Flag" class="${selectedFlag}">
+                            <span class="${selectedText}">+90</span>
+                            <span class="${dropdownArrow}">▼</span>
+                        </div>
+                        <div class="${dropdownOptions}">
+                            ${config.userInfo.countries.map(country => `
+                                <div class="${dropdownOption}" data-value="${country.value}">
+                                    <img src="${country.flag}" alt="Flag" class="${optionFlag}">
+                                    <span class="${optionText}">${country.value}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
                     <input type="tel" name="phone" placeholder="Phone" value="${state.userInfo.phone}">
                 </div>
                 <div class="${errorMessage}" name="phone">${errors.phone}</div>
@@ -574,12 +667,46 @@
     }
 
     self.setEvents = () => {
-        $(document).on('click', '.ins-button', (event) => {
+        const { button, customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag,
+            selectedText, optionFlag, optionText } = selectors;
+
+        const { rotated } = classes;
+
+
+        $(document).on('click', button, (event) => {
             if (state.currentStep === 'landing') {
                 event.preventDefault();
                 self.renderStep('userInfo');
             }
         });
+
+        $(document).on('click', dropdownSelected, (event) => {
+            event.stopPropagation();
+            $(dropdownOptions).toggle();
+            $(dropdownArrow).toggleClass(rotated);
+        });
+        
+        $(document).on('click', dropdownOption, (event) => {
+            const value = $(event.currentTarget).data('value');
+            const flagSrc = $(event.currentTarget).find(optionFlag).attr('src');
+            const text = $(event.currentTarget).find(optionText).text();
+            
+            $(selectedFlag).attr('src', flagSrc);
+            $(selectedText).text(text);
+            
+            $('select[name="dialCode"]').val(value);
+            
+            $(dropdownOptions).toggle(false);
+            $(dropdownArrow).removeClass(rotated);
+        });
+        
+        $(document).on('click', (event) => {
+            if (!$(event.target).closest(customDropdown).length) {
+                $(dropdownOptions).toggle(false);
+                $(dropdownArrow).removeClass(rotated);
+            }
+        });
+        
 
         $(document).on('submit', 'form', (event) => {
             event.preventDefault();
@@ -599,6 +726,7 @@
                     phone: formData.get('phone') || '',
                     dialCode: formData.get('dialCode') || ''
                 };
+                console.log(state.userInfo);
                 self.renderStep('skinType');
             }
 
