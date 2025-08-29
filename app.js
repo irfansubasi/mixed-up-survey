@@ -16,8 +16,8 @@
                 { value: '+90', label: 'Turkiye' },
                 { value: '+1', label: 'United States' },
                 { value: '+49', label: 'Germany' },
-                { value: '+44', label: 'United Kingdom'},
-                { value: '+33', label: 'France'},
+                { value: '+44', label: 'United Kingdom' },
+                { value: '+33', label: 'France' },
             ],
         },
         skinType: {
@@ -142,7 +142,7 @@
     self.buildCSS = () => {
         const { style } = classes;
         const { modalOverlay, modal, show, stepContent, modalContent, stepContainer, wrapper, stepTitle, stepDescription,
-            button, stepImage, userForm, formGroup, phoneGroup } = selectors;
+            button, stepImage, userForm, formGroup, phoneGroup, radioGroup, optionText, radioOption, checkboxGroup, checkboxOption } = selectors;
         const customStyle = `
             <style class="${style}">
 
@@ -153,7 +153,7 @@
                     font-family: 'Inter', 'Apple Color Emoji', sans-serif;
                 }
 
-                ${modalOverlay}{
+                ${modalOverlay} {
                     position: fixed;
                     background-color: rgba(0, 0, 0, 0.6);
                     height: 100%;
@@ -293,6 +293,74 @@
                     transition: all 0.3s ease;
                 }
 
+                ${radioGroup}{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    margin-bottom: 20px;
+                }
+
+                ${radioOption} input{
+                    width: 18px;
+                    height: 18px;
+                    accent-color: #F08000;
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    appearance: none;
+                    border: 2px solid #F08000;
+                    border-radius: 50%;
+                    outline: none;
+                }
+
+                ${radioOption} {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+                ${radioOption} input:checked{
+                    background-color: #F08000;
+                }
+
+                ${optionText}{
+                    font-size: 20px;
+                }
+
+                ${optionText} strong{
+                    color: #374151;
+                }
+
+                ${optionText} small{
+                    color: #4A4A4A;
+                }
+
+                ${checkboxGroup}{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    margin-bottom: 20px;
+                }
+
+                ${checkboxOption} input{
+                    width: 18px;
+                    height: 18px;
+                    accent-color: #F08000;
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    appearance: none;
+                    border: 2px solid #F08000;
+                }
+
+                ${checkboxOption} input:checked{
+                    background-color: #F08000;
+                }
+
+                ${checkboxOption}{
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
                 ${show}{
                     display: flex;
                     animation: fadeIn 2s ease;
@@ -334,21 +402,18 @@
         const { stepContent, stepContainer } = selectors;
         const { show, stepContent: stepContentClass } = classes;
 
+        let newStep;
+
         const existingStep = $(stepContainer).find(`[data-step="${step}"]`);
 
-        if (existingStep.length > 0) {
-            $(stepContainer).find(stepContent).removeClass(show);
-            existingStep.addClass(show);
-            return;
+        if (!existingStep.length) {
+            newStep = $(`<div class="${stepContentClass}" data-step="${step}">${self.getStepHTML(step)}</div>`);
+
+            $(stepContainer).append(newStep);
         }
 
-        const html = self.getStepHTML(step);
-        const newStep = $(`<div class="${stepContentClass}" data-step="${step}">${html}</div>`);
-
-        $(stepContainer).append(newStep);
-
         $(stepContainer).find(stepContent).removeClass(show);
-        newStep.addClass(show);
+        $(`${stepContent}[data-step=${step}]`).addClass(show);
 
         state.currentStep = step;
     }
@@ -522,7 +587,7 @@
             if (currentStep === 'concern') {
                 const concerns = formData.getAll('concern');
                 state.answers.concern = concerns;
-                
+
                 self.renderStep('routine');
             }
 
