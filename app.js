@@ -998,7 +998,7 @@
             const phone = formData.get('phone');
             const dialCode = formData.get('dialCode');
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             const phoneRegexByCountry = {
                 "+90": /^[1-9][0-9]{9}$/,
                 "+1": /^[2-9][0-9]{9}$/,
