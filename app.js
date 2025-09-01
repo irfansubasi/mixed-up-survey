@@ -116,7 +116,7 @@
                 { name: 'Repairing Balm', price: '$25', description: 'Soothes and repairs dry skin', image: 'https://placehold.co/150x150' },
                 { name: 'Ceramide Moisturizer', price: '$28', description: 'Strengthens skin barrier', image: 'https://placehold.co/150x150' }
             ],
-            fineLines: [
+            'fine-lines': [
                 { name: 'Anti-Aging Night Cream', price: '$45', description: 'Targets fine lines and wrinkles', image: 'https://placehold.co/150x150' },
                 { name: 'Retinol Serum', price: '$40', description: 'Stimulates collagen production', image: 'https://placehold.co/150x150' },
                 { name: 'Peptide Eye Cream', price: '$32', description: 'Reduces under-eye fine lines', image: 'https://placehold.co/150x150' }
@@ -133,7 +133,7 @@
                 { name: 'Collagen Boosting Serum', price: '$42', description: 'Firms and lifts skin', image: 'https://placehold.co/150x150' },
                 { name: 'SPF 50 Sunscreen', price: '$20', description: 'Essential daily protection', image: 'https://placehold.co/150x150' }
             ],
-            darkSpots: [
+            'dark-spots': [
                 { name: 'Dark Spot Corrector', price: '$35', description: 'Fades hyperpigmentation', image: 'https://placehold.co/150x150' },
                 { name: 'Brightening Treatment', price: '$30', description: 'Even skin tone', image: 'https://placehold.co/150x150' },
                 { name: 'Vitamin C Complex', price: '$32', description: 'Reduces sun damage', image: 'https://placehold.co/150x150' }
@@ -155,7 +155,7 @@
                 { name: 'Balanced Anti-Aging Serum', price: '$35', description: 'Works for all skin areas', image: 'https://placehold.co/150x150' },
                 { name: 'Multi-Zone Moisturizer', price: '$28', description: 'Adapts to different skin needs', image: 'https://placehold.co/150x150' }
             ],
-            darkSpots: [
+            'dark-spots': [
                 { name: 'Targeted Spot Treatment', price: '$32', description: 'Precise dark spot correction', image: 'https://placehold.co/150x150' },
                 { name: 'Even Tone Serum', price: '$30', description: 'Balances combination skin tone', image: 'https://placehold.co/150x150' },
                 { name: 'Brightening Mask', price: '$25', description: 'Weekly treatment for all zones', image: 'https://placehold.co/150x150' }
@@ -1080,9 +1080,12 @@
             if (!phone) {
                 $(`${errorMessage}[name="phone"]`).text(phoneText).addClass(show);
                 hasError = true;
-            } else if (!phoneRegexByCountry[dialCode].test(phone)) {
-                $(`${errorMessage}[name="phone"]`).text(phoneInvalidText).addClass(show);
-                hasError = true;
+            } else {
+                const unformattedPhone = self.unformatPhoneNumber(phone);
+                if (!phoneRegexByCountry[dialCode].test(unformattedPhone)) {
+                    $(`${errorMessage}[name="phone"]`).text(phoneInvalidText).addClass(show);
+                    hasError = true;
+                }
             }
         }
 
