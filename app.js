@@ -14,11 +14,11 @@
             consent: 'I consent to the collection of my data',
             button: 'Continue',
             countries: [
-                { value: '+90', label: 'Turkiye', flag: 'https://flagcdn.com/tr.svg' },
-                { value: '+1', label: 'United States', flag: 'https://flagcdn.com/us.svg' },
-                { value: '+49', label: 'Germany', flag: 'https://flagcdn.com/de.svg' },
-                { value: '+44', label: 'United Kingdom', flag: 'https://flagcdn.com/gb.svg' },
-                { value: '+33', label: 'France', flag: 'https://flagcdn.com/fr.svg' },
+                { value: '+90', label: 'Turkiye', flag: 'https://flagcdn.com/tr.svg', mask: '(###) ###-##-##' },
+                { value: '+1', label: 'United States', flag: 'https://flagcdn.com/us.svg', mask: '(###)-###-##-##' },
+                { value: '+49', label: 'Germany', flag: 'https://flagcdn.com/de.svg', mask: '(###)-###-##-###' },
+                { value: '+44', label: 'United Kingdom', flag: 'https://flagcdn.com/gb.svg', mask: '(####)-###-###' },
+                { value: '+33', label: 'France', flag: 'https://flagcdn.com/fr.svg', mask: '(#)-##-##-##-##' },
             ],
             errors: {
                 consent: 'You can\'t continue without consent!',
@@ -759,7 +759,7 @@
                                 `).join('')}
                             </div>
                         </div>
-                        <input type="tel" name="phone" placeholder="Phone" value="${state.userInfo.phone}">
+                        <input type="tel" name="phone" placeholder="Phone" value="${state.userInfo.phone}" data-mask="${config.userInfo.countries.find(item => item.value === (state.userInfo.dialCode || '+90')).mask}">
                     </div>
                     <div class="${errorMessage}" name="phone">${errors.phone}</div>
                 </div>
@@ -923,11 +923,21 @@
             const value = $(event.currentTarget).data('value');
             const flagSrc = $(event.currentTarget).find(optionFlag).attr('src');
             const text = $(event.currentTarget).find(optionText).text();
+            const mask = config.userInfo.countries.find(item => item.value === value).mask;
 
             $(selectedFlag).attr('src', flagSrc);
             $(selectedText).text(text);
 
             $('select[name="dialCode"]').val(value);
+            
+            $('input[name="phone"]').attr('data-mask', mask);
+            
+            const currentPhone = $('input[name="phone"]').val();
+            if (currentPhone) {
+                const unformatted = self.unformatPhoneNumber(currentPhone);
+                const formatted = self.formatPhoneNumber(unformatted, mask);
+                $('input[name="phone"]').val(formatted);
+            }
 
             $(dropdownOptions).toggle(false);
             $(dropdownArrow).removeClass(rotated);
@@ -938,6 +948,16 @@
                 $(dropdownOptions).toggle(false);
                 $(dropdownArrow).removeClass(rotated);
             }
+        });
+
+        $(document).on('input', 'input[name="phone"]', (event) => {
+            const $input = $(event.target);
+            const mask = $input.attr('data-mask');
+            const value = event.target.value;
+            
+            const numbers = value.replace(/\D/g, '');
+            const formatted = self.formatPhoneNumber(numbers, mask);
+            $input.val(formatted);
         });
 
 
@@ -982,6 +1002,27 @@
                     break;
             }
         });
+    };
+
+    self.formatPhoneNumber = (value, mask) => {
+        if (!value) return '';
+        const numbers = value.replace(/\D/g, '');
+        let result = '';
+        let numberIndex = 0;
+        
+        for (let i = 0; i < mask.length && numberIndex < numbers.length; i++) {
+            if (mask[i] === '#') {
+                result += numbers[numberIndex];
+                numberIndex++;
+            } else {
+                result += mask[i];
+            }
+        }
+        return result;
+    };
+
+    self.unformatPhoneNumber = (formattedValue) => {
+        return formattedValue.replace(/\D/g, '');
     };
 
     self.validateForm = (formData, currentStep) => {
