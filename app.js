@@ -81,6 +81,11 @@
             carouselPrev: '‹ Previous',
             carouselNext: 'Next ›',
         },
+        coupon: {
+            title: 'Get Your Coupon Code',
+            description: 'You can copy the coupon code valid for our recommended products to get a discount.',
+            copyButton: 'Copy',
+        },
         eventName: '.ins-event',
     };
 
@@ -197,6 +202,39 @@
         }
     }
 
+    const couponConfig = {
+        'oily-acne': 'OILYACNE25',
+        'oily-pores': 'OILYPORES22',
+        'oily-shine': 'OILYSHINE20',
+        'oily-texture': 'OILYTEXTURE23',
+
+        'dry-hydration': 'DRYHYDRO30',
+        'dry-flakiness': 'DRYFLAKE25',
+        'dry-fine-lines': 'DRYAGING32',
+        'dry-dullness': 'DRYDULL28',
+
+        'normal-aging': 'NORMALAGING25',
+        'normal-dark-spots': 'NORMALSPOTS22',
+        'normal-sensitivity': 'NORMALSENS20',
+        'normal-hydration': 'NORMALHYDRO18',
+
+        'combination-aging': 'COMBOAGING30',
+        'combination-dark-spots': 'COMBOSPOTS25',
+        'combination-sensitivity': 'COMBOSENS22',
+        'combination-hydration': 'COMBOHYDRO25',
+
+        'sensitive-aging': 'SENSAGING32',
+        'sensitive-dark-spots': 'SENSSPOTS28',
+        'sensitive-sensitivity': 'SENSSENS25',
+        'sensitive-hydration': 'SENSHYDRO28',
+
+        'oily-multi': 'OILYMULTI30',
+        'dry-multi': 'DRYMULTI35',
+        'normal-multi': 'NORMALMULTI28',
+        'combination-multi': 'COMBOMULTI32',
+        'sensitive-multi': 'SENSMULTI30'
+    };
+
     const state = {
         currentStep: 'landing',
         consent: false,
@@ -261,6 +299,9 @@
         carouselNav: 'ins-carousel-nav',
         carouselPrev: 'ins-carousel-prev',
         carouselNext: 'ins-carousel-next',
+        couponCodeWrapper: 'ins-coupon-code-wrapper',
+        couponCode: 'ins-coupon-code',
+        copyButton: 'ins-copy-button',
     };
 
     const selectors = Object.keys(classes).reduce((createdSelector, key) => (
@@ -303,7 +344,7 @@
             button, stepImage, userForm, formGroup, phoneGroup, radioGroup, optionText, radioOption, checkboxGroup, checkboxOption, errorMessage,
             customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag, selectedText, optionFlag, rotated,
             recommendationsContainer, productCard, productImage, productName, productPrice, productDescription, closeButton, carouselTrack,
-            carouselSlide, carouselPrev, carouselNext, carouselNav } = selectors;
+            carouselSlide, carouselPrev, carouselNext, carouselNav, couponCodeWrapper, couponCode, copyButton } = selectors;
         const customStyle = `
             <style class="${style}">
 
@@ -688,6 +729,31 @@
                     cursor: not-allowed;
                 }
 
+                ${couponCodeWrapper}{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    margin-top: 20px;
+                }
+
+                ${couponCode}{
+                    color: #000000;
+                    padding: 20px 40px;
+                    border-radius: 10px;
+                    border: dashed 2px #000000;
+                    font-weight: 700;
+                }
+
+                ${copyButton}{
+                    border-radius: 10px;
+                    padding: 12px 24px;
+                    font-weight: 700;
+                }
+
+                ${copyButton}:hover{
+                    opacity: 0.8;
+                }
+
                 ${show}{
                     display: flex;
                     animation: fadeIn 2s ease;
@@ -760,6 +826,8 @@
                 return self.routineHTML();
             case 'products':
                 return self.productsHTML();
+            case 'coupons':
+                return self.couponHTML();
         }
     }
 
@@ -939,6 +1007,23 @@
         `;
     };
 
+    self.couponHTML = () => {
+
+        const { stepTitle, stepDescription, couponCodeWrapper, couponCode, button, copyButton } = classes;
+        const { title, description, copyButton: copyButtonText } = config.coupon;
+        const couponCodeText = self.getCouponCode();
+
+        return `
+            <h2 class="${stepTitle}">${title}</h2>
+            <p class="${stepDescription}">${description}</p>
+            <div class="${couponCodeWrapper}">
+                <div class="${couponCode}">${couponCodeText}</div>
+                <button type="button" class="${button} ${copyButton}">${copyButtonText}</button>
+            </div>
+
+        `;
+    }
+
     self.getProductRecommendations = () => {
         const { skinType, concern } = state.answers;
         const recommendations = [];
@@ -953,6 +1038,19 @@
 
         return recommendations;
     };
+
+    self.getCouponCode = () => {
+        const { skinType, concern } = state.answers;
+
+        if (concern.length === 1) {
+            const key = `${skinType}-${concern[0]}`;
+            return couponConfig[key];
+        } else if (concern.length > 1) {
+            return couponConfig[`${skinType}-multi`];
+        }
+
+        return null;
+    }
 
     self.setEvents = () => {
         const { button, customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag,
@@ -976,6 +1074,12 @@
             if (state.currentStep === 'landing') {
                 event.preventDefault();
                 self.renderStep('userInfo');
+            } else if (state.currentStep === 'products') {
+                event.preventDefault();
+                self.renderStep('coupons');
+            } else if (state.currentStep === 'coupons') {
+                event.preventDefault();
+                self.copyCouponCode();
             }
         });
 
@@ -1066,13 +1170,16 @@
                     state.answers.routine = routine;
                     self.renderStep('products');
                     break;
+                case 'products':
+                    self.renderStep('coupons');
+                    break;
             }
         });
 
         $(document).on(`click${eventName}`, carouselPrev, () => {
             self.carouselSlide('prev');
         });
-        
+
         $(document).on(`click${eventName}`, carouselNext, () => {
             self.carouselSlide('next');
         });
@@ -1167,24 +1274,33 @@
     self.carouselSlide = (direction) => {
         const { carouselTrack, carouselPrev, carouselNext, carouselSlide } = selectors;
 
-        
+
         const currentPosition = state.carouselPosition;
         const slideAmount = 270;
         const carouselSlidesLength = $(carouselSlide).length;
         let newPosition;
-        
+
         if (direction === 'next') {
             const maxPosition = -(carouselSlidesLength - 1) * slideAmount;
             newPosition = Math.max(maxPosition, currentPosition - slideAmount);
         } else {
             newPosition = Math.min(0, currentPosition + slideAmount);
         }
-        
+
         $(carouselTrack).css('transform', `translateX(${newPosition}px)`);
         state.carouselPosition = newPosition;
-        
+
         $(carouselPrev).prop('disabled', newPosition >= 0);
         $(carouselNext).prop('disabled', newPosition <= -(carouselSlidesLength - 1) * slideAmount);
+    }
+
+    self.copyCouponCode = () => {
+        const { couponCode, copyButton } = selectors;
+        const couponCodeText = $(couponCode).text();
+
+        navigator.clipboard.writeText(couponCodeText);
+
+        $(copyButton).text('Copied!');
     }
 
     self.init();
