@@ -2,6 +2,7 @@
     "use strict";
 
     const config = {
+        closeButton: 'X',
         landing: {
             image: 'https://raw.githubusercontent.com/irfansubasi/mixed-up-survey/refs/heads/main/pic%20for%20url/choose.png',
             title: 'We want to know a little bit about you',
@@ -250,6 +251,7 @@
         productName: 'ins-product-name',
         productPrice: 'ins-product-price',
         productDescription: 'ins-product-description',
+        closeButton: 'ins-close-button',
     };
 
     const selectors = Object.keys(classes).reduce((createdSelector, key) => (
@@ -285,7 +287,7 @@
         const { modalOverlay, modal, show, stepContent, modalContent, stepContainer, wrapper, stepTitle, stepDescription,
             button, stepImage, userForm, formGroup, phoneGroup, radioGroup, optionText, radioOption, checkboxGroup, checkboxOption, errorMessage,
             customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag, selectedText, optionFlag, rotated,
-            recommendationsContainer, productCard, productImage, productName, productPrice, productDescription } = selectors;
+            recommendationsContainer, productCard, productImage, productName, productPrice, productDescription, closeButton } = selectors;
         const customStyle = `
             <style class="${style}">
 
@@ -622,6 +624,15 @@
                     line-height: 1.4;
                 }
 
+                ${closeButton}{
+                    position: absolute;
+                    right: 25px;
+                    top: 25px;
+                    font-weight: 700;
+                    font-size: 24px;
+                    cursor: pointer;
+                }
+
                 ${show}{
                     display: flex;
                     animation: fadeIn 2s ease;
@@ -641,12 +652,13 @@
     };
 
     self.buildHTML = () => {
-        const { wrapper, modalOverlay, modal, modalContent, stepContainer } = classes;
+        const { wrapper, modalOverlay, modal, modalContent, stepContainer, closeButton } = classes;
 
         const outerHTML = `
             <div class="${wrapper}">
                 <div class="${modalOverlay}"></div>
                 <div class="${modal}">
+                    <div class="${closeButton}">${config.closeButton}</div>
                     <div class="${modalContent}">
                         <div class="${stepContainer}"></div>
                     </div>
@@ -879,10 +891,19 @@
 
     self.setEvents = () => {
         const { button, customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag,
-            selectedText, optionFlag, optionText } = selectors;
+            selectedText, optionFlag, optionText, closeButton, modalOverlay, modal } = selectors;
 
         const { rotated } = classes;
 
+        $(document).on('click', closeButton, (event) => {
+            $(modalOverlay).toggle(false);
+            $(modal).toggle(false);
+        });
+
+        $(document).on('click', modalOverlay, (event) => {
+            $(modalOverlay).toggle(false);
+            $(modal).toggle(false);
+        });
 
         $(document).on('click', button, (event) => {
             if (state.currentStep === 'landing') {
