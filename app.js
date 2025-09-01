@@ -78,6 +78,8 @@
         products: {
             title: 'Your Personalized Recommendations',
             button: 'Get Discount Code',
+            carouselPrev: '‹ Previous',
+            carouselNext: 'Next ›',
         },
         eventName: '.ins-event',
     };
@@ -211,6 +213,7 @@
             budget: null,
         },
         recommendations: [],
+        carouselPosition: 0,
     };
 
     const classes = {
@@ -253,6 +256,11 @@
         productPrice: 'ins-product-price',
         productDescription: 'ins-product-description',
         closeButton: 'ins-close-button',
+        carouselTrack: 'ins-carousel-track',
+        carouselSlide: 'ins-carousel-slide',
+        carouselNav: 'ins-carousel-nav',
+        carouselPrev: 'ins-carousel-prev',
+        carouselNext: 'ins-carousel-next',
     };
 
     const selectors = Object.keys(classes).reduce((createdSelector, key) => (
@@ -294,7 +302,8 @@
         const { modalOverlay, modal, show, stepContent, modalContent, stepContainer, wrapper, stepTitle, stepDescription,
             button, stepImage, userForm, formGroup, phoneGroup, radioGroup, optionText, radioOption, checkboxGroup, checkboxOption, errorMessage,
             customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag, selectedText, optionFlag, rotated,
-            recommendationsContainer, productCard, productImage, productName, productPrice, productDescription, closeButton } = selectors;
+            recommendationsContainer, productCard, productImage, productName, productPrice, productDescription, closeButton, carouselTrack,
+            carouselSlide, carouselPrev, carouselNext, carouselNav } = selectors;
         const customStyle = `
             <style class="${style}">
 
@@ -332,7 +341,7 @@
                 }
 
                 ${stepContainer}{
-                    overflow-y: auto;
+                    overflow: hidden;
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
@@ -587,9 +596,6 @@
                 }
 
                 ${recommendationsContainer}{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                    gap: 20px;
                     width: 100%;
                     max-width: 800px;
                 }
@@ -613,7 +619,7 @@
 
                 ${productName}{
                     color: #1F2937;
-                    font-size: 18px;
+                    font-size: 15px;
                     font-weight: 600;
                     margin-bottom: 8px;
                 }
@@ -638,6 +644,48 @@
                     font-weight: 700;
                     font-size: 24px;
                     cursor: pointer;
+                }
+
+                ${carouselTrack}{
+                    display: flex;
+                    transition: transform 0.3s ease;
+                    gap: 20px;
+                }
+
+                ${carouselSlide}{
+                    min-width: 250px;
+                    flex-shrink: 0;
+                }
+
+                ${carouselNav}{
+                    display: flex;
+                    justify-content: center;
+                    gap: 10px;
+                    margin-top: 20px;
+                }
+
+                ${carouselPrev}{
+                    background: #F08000;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                }
+
+                ${carouselNext}{
+                    background: #F08000;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    transition: opacity 0.3s ease;
+                }
+
+                ${carouselPrev}:disabled,
+                ${carouselNext}:disabled{
+                    opacity: 0.5;
+                    cursor: not-allowed;
                 }
 
                 ${show}{
@@ -861,6 +909,36 @@
         `;
     }
 
+    self.productsHTML = () => {
+        const { stepTitle, button, recommendationsContainer, productCard, productImage, productName, productPrice, productDescription, carouselTrack,
+            carouselSlide, carouselPrev, carouselNext, carouselNav } = classes;
+        const { title, button: buttonText, carouselPrev: carouselPrevText, carouselNext: carouselNextText } = config.products;
+        const recommendations = self.getProductRecommendations();
+
+        return `
+            <h2 class="${stepTitle}">${title}</h2>
+            <div class="${recommendationsContainer}">
+                <div class="${carouselTrack}">
+                ${recommendations.map(product => `
+                    <div class="${carouselSlide}">
+                        <div class="${productCard}">
+                            <img src="${product.image}" alt="${product.name}" class="${productImage}">
+                            <h3 class="${productName}">${product.name}</h3>
+                            <p class="${productPrice}">${product.price}</p>
+                            <p class="${productDescription}">${product.description}</p>
+                        </div>
+                    </div>
+                `).join('')}
+                </div>
+                <div class="${carouselNav}">
+                    <button type="button" class="${carouselPrev}" disabled>${carouselPrevText}</button>
+                    <button type="button" class="${carouselNext}">${carouselNextText}</button>
+                </div>
+            </div>
+            <button type="button" class="${button}">${buttonText}</button>
+        `;
+    };
+
     self.getProductRecommendations = () => {
         const { skinType, concern } = state.answers;
         const recommendations = [];
@@ -876,30 +954,9 @@
         return recommendations;
     };
 
-    self.productsHTML = () => {
-        const { stepTitle, button, recommendationsContainer, productCard, productImage, productName, productPrice, productDescription } = classes;
-        const { title, button: buttonText } = config.products;
-        const recommendations = self.getProductRecommendations();
-
-        return `
-            <h2 class="${stepTitle}">${title}</h2>
-            <div class="${recommendationsContainer}">
-                ${recommendations.map(product => `
-                    <div class="${productCard}">
-                        <img src="${product.image}" alt="${product.name}" class="${productImage}">
-                        <h3 class="${productName}">${product.name}</h3>
-                        <p class="${productPrice}">${product.price}</p>
-                        <p class="${productDescription}">${product.description}</p>
-                    </div>
-                `).join('')}
-            </div>
-            <button type="button" class="${button}">${buttonText}</button>
-        `;
-    };
-
     self.setEvents = () => {
         const { button, customDropdown, dropdownSelected, dropdownOptions, dropdownOption, dropdownArrow, selectedFlag,
-            selectedText, optionFlag, optionText, closeButton, modalOverlay, modal } = selectors;
+            selectedText, optionFlag, optionText, closeButton, modalOverlay, modal, carouselTrack, carouselPrev, carouselNext } = selectors;
 
         const { rotated } = classes;
 
@@ -1011,6 +1068,14 @@
                     break;
             }
         });
+
+        $(document).on(`click${eventName}`, carouselPrev, () => {
+            self.carouselSlide('prev');
+        });
+        
+        $(document).on(`click${eventName}`, carouselNext, () => {
+            self.carouselSlide('next');
+        });
     };
 
     self.formatPhoneNumber = (value, mask) => {
@@ -1097,6 +1162,29 @@
             }
         }
         return !hasError;
+    }
+
+    self.carouselSlide = (direction) => {
+        const { carouselTrack, carouselPrev, carouselNext, carouselSlide } = selectors;
+
+        
+        const currentPosition = state.carouselPosition;
+        const slideAmount = 270;
+        const carouselSlidesLength = $(carouselSlide).length;
+        let newPosition;
+        
+        if (direction === 'next') {
+            const maxPosition = -(carouselSlidesLength - 1) * slideAmount;
+            newPosition = Math.max(maxPosition, currentPosition - slideAmount);
+        } else {
+            newPosition = Math.min(0, currentPosition + slideAmount);
+        }
+        
+        $(carouselTrack).css('transform', `translateX(${newPosition}px)`);
+        state.carouselPosition = newPosition;
+        
+        $(carouselPrev).prop('disabled', newPosition >= 0);
+        $(carouselNext).prop('disabled', newPosition <= -(carouselSlidesLength - 1) * slideAmount);
     }
 
     self.init();
