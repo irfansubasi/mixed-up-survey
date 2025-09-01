@@ -728,13 +728,6 @@
             <h2 class="${stepTitle}">${title}</h2>
             <form class="${userForm}">
                 <div class="${formGroup}">
-                    <label>
-                        <input type="checkbox" name="consent" ${state.consent ? 'checked' : ''}>
-                        ${consent}
-                    </label>
-                    <div class="${errorMessage}" name="consent">${errors.consent}</div>
-                </div>
-                <div class="${formGroup}">
                     <input type="text" name="name" placeholder="Full Name" value="${state.userInfo.name}">
                     <div class="${errorMessage}" name="name">${errors.name}</div>
                 </div>
@@ -742,33 +735,41 @@
                     <input type="text" name="email" placeholder="Email" value="${state.userInfo.email}">
                     <div class="${errorMessage}" name="email">${errors.email}</div>
                 </div>
-                <div class="${phoneGroup}">
-                    <select name="dialCode">
-                        ${config.userInfo.countries.map(country => `
-                            <option value="${country.value}" ${state.userInfo.dialCode === country.value ? 'selected' : ''}>
-                                ${country.label}
-                            </option>
-                        `).join('')}
-                    </select>
-                    <div class="${customDropdown}">
-                        <div class="${dropdownSelected}">
-                            <img src="https://flagcdn.com/tr.svg" alt="Flag" class="${selectedFlag}">
-                            <span class="${selectedText}">+90</span>
-                            <span class="${dropdownArrow}">▼</span>
-                        </div>
-                        <div class="${dropdownOptions}">
+                <div class="${formGroup}">
+                    <div class="${phoneGroup}">
+                        <select name="dialCode">
                             ${config.userInfo.countries.map(country => `
-                                <div class="${dropdownOption}" data-value="${country.value}">
-                                    <img src="${country.flag}" alt="Flag" class="${optionFlag}">
-                                    <span class="${optionText}">${country.value}</span>
-                                </div>
+                                <option value="${country.value}" ${state.userInfo.dialCode === country.value ? 'selected' : ''}>
+                                    ${country.label}
+                                </option>
                             `).join('')}
+                        </select>
+                        <div class="${customDropdown}">
+                            <div class="${dropdownSelected}">
+                                <img src="https://flagcdn.com/tr.svg" alt="Flag" class="${selectedFlag}">
+                                <span class="${selectedText}">+90</span>
+                                <span class="${dropdownArrow}">▼</span>
+                            </div>
+                            <div class="${dropdownOptions}">
+                                ${config.userInfo.countries.map(country => `
+                                    <div class="${dropdownOption}" data-value="${country.value}">
+                                        <img src="${country.flag}" alt="Flag" class="${optionFlag}">
+                                        <span class="${optionText}">${country.value}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
+                        <input type="tel" name="phone" placeholder="Phone" value="${state.userInfo.phone}">
                     </div>
-                    
-                    <input type="tel" name="phone" placeholder="Phone" value="${state.userInfo.phone}">
+                    <div class="${errorMessage}" name="phone">${errors.phone}</div>
                 </div>
-                <div class="${errorMessage}" name="phone">${errors.phone}</div>
+                <div class="${formGroup}">
+                    <label>
+                        <input type="checkbox" name="consent" ${state.consent ? 'checked' : ''}>
+                        ${consent}
+                    </label>
+                    <div class="${errorMessage}" name="consent">${errors.consent}</div>
+                </div>
                 <button type="submit" class="${button}">${buttonText}</button>
             </form>
         `;
