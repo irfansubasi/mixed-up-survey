@@ -78,7 +78,8 @@
         products: {
             title: 'Your Personalized Recommendations',
             button: 'Get Discount Code',
-        }
+        },
+        eventName: '.ins-event',
     };
 
     const productsConfig = {
@@ -279,7 +280,13 @@
     };
 
     self.reset = () => {
+        const { wrapper } = selectors;
+        const { eventName } = config;
 
+        $(wrapper).remove();
+        $(document).off(`click${eventName}`);
+        $(document).off(`input${eventName}`);
+        $(document).off(`submit${eventName}`);
     };
 
     self.buildCSS = () => {
@@ -896,30 +903,32 @@
 
         const { rotated } = classes;
 
-        $(document).on('click', closeButton, (event) => {
+        const { eventName } = config;
+
+        $(document).on(`click${eventName}`, closeButton, () => {
             $(modalOverlay).toggle(false);
             $(modal).toggle(false);
         });
 
-        $(document).on('click', modalOverlay, (event) => {
+        $(document).on(`click${eventName}`, modalOverlay, () => {
             $(modalOverlay).toggle(false);
             $(modal).toggle(false);
         });
 
-        $(document).on('click', button, (event) => {
+        $(document).on(`click${eventName}`, button, (event) => {
             if (state.currentStep === 'landing') {
                 event.preventDefault();
                 self.renderStep('userInfo');
             }
         });
 
-        $(document).on('click', dropdownSelected, (event) => {
+        $(document).on(`click${eventName}`, dropdownSelected, (event) => {
             event.stopPropagation();
             $(dropdownOptions).toggle();
             $(dropdownArrow).toggleClass(rotated);
         });
 
-        $(document).on('click', dropdownOption, (event) => {
+        $(document).on(`click${eventName}`, dropdownOption, (event) => {
             const value = $(event.currentTarget).data('value');
             const flagSrc = $(event.currentTarget).find(optionFlag).attr('src');
             const text = $(event.currentTarget).find(optionText).text();
@@ -929,9 +938,9 @@
             $(selectedText).text(text);
 
             $('select[name="dialCode"]').val(value);
-            
+
             $('input[name="phone"]').attr('data-mask', mask);
-            
+
             const currentPhone = $('input[name="phone"]').val();
             if (currentPhone) {
                 const unformatted = self.unformatPhoneNumber(currentPhone);
@@ -943,25 +952,25 @@
             $(dropdownArrow).removeClass(rotated);
         });
 
-        $(document).on('click', (event) => {
+        $(document).on(`click${eventName}`, (event) => {
             if (!$(event.target).closest(customDropdown).length) {
                 $(dropdownOptions).toggle(false);
                 $(dropdownArrow).removeClass(rotated);
             }
         });
 
-        $(document).on('input', 'input[name="phone"]', (event) => {
+        $(document).on(`input${eventName}`, 'input[name="phone"]', (event) => {
             const $input = $(event.target);
             const mask = $input.attr('data-mask');
             const value = event.target.value;
-            
+
             const numbers = value.replace(/\D/g, '');
             const formatted = self.formatPhoneNumber(numbers, mask);
             $input.val(formatted);
         });
 
 
-        $(document).on('submit', 'form', (event) => {
+        $(document).on(`submit${eventName}`, 'form', (event) => {
             event.preventDefault();
 
             const formData = new FormData(event.target);
@@ -1009,7 +1018,7 @@
         const numbers = value.replace(/\D/g, '');
         let result = '';
         let numberIndex = 0;
-        
+
         for (let i = 0; i < mask.length && numberIndex < numbers.length; i++) {
             if (mask[i] === '#') {
                 result += numbers[numberIndex];
